@@ -44,22 +44,23 @@ while (cap.isOpened()):
     cv2.imshow("mask_1", mask_1)
 
     #Abrindo e expandindo a imagem onde há a máscara 1 (cor)
-  
-
+    mask_1 = cv2.morphologyEx(mask_1, cv2.MORPH_OPEN, np.ones((3,3),np.uint8))
+    mask_1 = cv2.morphologyEx(mask_1, cv2.MORPH_DILATE, np.ones((3,3),np.uint8))
     #Selecionando apenas a parte que não possui máscara 1 e salvando-a na máscara 2
-   
-
+    mask_2 = cv2.bitwise_not(mask_1)
+    
     #Mantendo apenas a parte das imagens sem a cor vermelha
     #(ou qualquer outra cor que você escolher)
-   
+    res_1 = cv2.bitwise_and(img, img, mask=mask_2)
 
     #Mantendo apenas a parte das imagens com a cor vermelha
-   
+    res_2 = cv2.bitwise_and(bg, bg, mask=mask_1)
 
     #Gerando o resultado final mesclando res_1 e res_2
-    
+    final_output = cv2.addWeighted(res_1, 1, res_2, 1, 0)
+    output_file.write(final_output)
     #Exibindo o resultado para o usuário
-    
+    cv2.imshow("Capa invisibilidade", final_output)
     cv2.waitKey(1)
 
 cap.release()
